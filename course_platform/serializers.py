@@ -49,5 +49,5 @@ class LogSerializers(serializers.ModelSerializer):
 class UserListSerializers(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'password', 'email', 'tel', 'age', 'sex', 'status')
+        fields = ('username', 'password', 'email', 'tel', 'age', 'sex', 'status', 'register_date')
 

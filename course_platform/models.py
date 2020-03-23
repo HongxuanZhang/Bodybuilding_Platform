@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .UUIDTools import UUIDTools
+import datetime
 
 class User(AbstractUser):
     tel = models.CharField(max_length=20)
@@ -9,6 +10,7 @@ class User(AbstractUser):
     sex = models.CharField(max_length=2)
     status = models.CharField(max_length=10)
     isAdmin = models.BooleanField(default=False)
+    register_date = models.DateField(auto_now_add=True)
 
     class Meta:
         db_table = 'users'
