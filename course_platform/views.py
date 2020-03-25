@@ -20,8 +20,8 @@ class CourseViewSet(ModelViewSet):
     authentication_classes = (CsrfExemptSessionAuthentication,)
 
     def list(self, request, *args, **kwargs):
-        serializer = CourseSerializer(self.get_queryset(), many=True)
-        return Response(data=serializer.data)
+        serializer = CourseQuerySerializer(self.get_queryset(), many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     def run_create_or_update(self, request, serializer):
         if serializer.is_valid():
@@ -46,7 +46,7 @@ class RegList(APIView):
         res = RegSerializers(data=request.data)
         if res.is_valid():
             res.save()
-            return Response(data=res.validated_data, status=status.HTTP_201_CREATED)
+            return Response(status=status.HTTP_201_CREATED)
         return Response(res.errors)
 
     def put(self, request, format=None):
@@ -56,7 +56,7 @@ class RegList(APIView):
             user.status = 'Locked'
         else:
             user.status = 'Normal'
-        res = UserListSerializers(user, user.__dict__())
+        res = UserListSerializers(user, user.__dict__)
         if res.is_valid():
             res.save()
             return Response(status=status.HTTP_202_ACCEPTED)
@@ -70,8 +70,8 @@ class LogList(APIView):
         data = request.data
         res = LogSerializers(data=data)
         if res.is_valid():
-            return Response(data=res.validated_data, status=status.HTTP_202_ACCEPTED)
-        return Response(res.errors)
+            return Response(status=status.HTTP_202_ACCEPTED)
+        return Response(res.errors, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class UserOperationSet(ModelViewSet):
@@ -80,8 +80,8 @@ class UserOperationSet(ModelViewSet):
     authentication_classes = (CsrfExemptSessionAuthentication,)
 
     def list(self, request, *args, **kwargs):
-        serializer = UserListSerializers(self.queryset, many=True)
-        return Response(serializer.data)
+        serializer = UserListSerializers(self.queryset.filter(isAdmin=False, is_staff=False), many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def update(self, request, *args, **kwargs):
         newpwd = request.data['newpwd']
@@ -89,7 +89,7 @@ class UserOperationSet(ModelViewSet):
         username = request.data['username']
         user = User.objects.get(username=username)
         user.password = newpwd
-        userdict = user.__dict__()
+        userdict = user.__dict__
         userdict['confirmpwd'] = confirmpwd
         res = RegSerializers(instance=user, data=userdict)
         if res.is_valid():

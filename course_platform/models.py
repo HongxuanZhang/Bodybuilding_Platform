@@ -6,11 +6,12 @@ import datetime
 class User(AbstractUser):
     tel = models.CharField(max_length=20)
     email = models.EmailField()
-    age = models.IntegerField()
-    sex = models.CharField(max_length=2)
-    status = models.CharField(max_length=10)
+    age = models.IntegerField(null=True)
+    sex = models.CharField(max_length=2, null=True)
+    status = models.CharField(max_length=10, default="Normal")
     isAdmin = models.BooleanField(default=False)
-    register_date = models.DateField(auto_now_add=True)
+
+    REQUIRED_FIELDS = ['tel', 'email']
 
     class Meta:
         db_table = 'users'
@@ -20,9 +21,9 @@ class Course(models.Model):
     id = models.UUIDField(primary_key=True, default=UUIDTools.uuid1_hex, editable=False)
     description = models.TextField()
     online_date = models.DateField(auto_now_add=True)
-    student_num = models.IntegerField()
-    star_rate = models.FloatField()
-    tag = models.CharField(max_length=10)
+    student_num = models.IntegerField(default=0)
+    star_rate = models.FloatField(default=0)
+    tag = models.CharField(max_length=10, null=True)
 
     def __str__(self):
         return self.name
