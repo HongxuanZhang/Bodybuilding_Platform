@@ -3,16 +3,15 @@ from django.contrib import admin
 from rest_framework.routers import DefaultRouter
 from course_platform.views import *
 
-router = DefaultRouter()
-router.register('userservice', UserOperationSet, 'userservice')
-router.register('course', CourseViewSet, 'course')
+user_service = UserOperationSet.as_view({"get": "list", "post": "update"})
+course = CourseViewSet.as_view({"get": "list", "post": "create", "put": "update"})
 
 API_V1 = [
-    url(r'^register/', RegList, name='register'),
-    url(r'^login', LogList, name='login')
+    url(r'^register/', RegList.as_view(), name='register'),
+    url(r'^login/', LogList.as_view(), name='login'),
+    url(r'^user_service/', user_service, name='user_service'),
+    url(r'^course/', course, name='course'),
 ]
-
-API_V1.extend(router.urls)
 
 API_VERSIONS = [url(r'^v1/', include(API_V1))]
 

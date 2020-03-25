@@ -6,24 +6,24 @@ from .models import *
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
-        fields = ('id', 'name', 'tag', 'star_rate', 'student_num', 'online_date')
+        fields = ('name', 'tag', 'description')
 
-class CourseDetailSerializer(serializers.ModelSerializer):
+class CourseQuerySerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
-        fields = ('name', 'description', 'tag', 'star_rate', 'student_num', 'online_date')
+        fields = '__all__'
 
 class RegSerializers(serializers.ModelSerializer):
-    comfirmpwd = serializers.CharField(max_length=256, min_length=4, write_only=True)
+    confirmpwd = serializers.CharField(max_length=256, min_length=4, write_only=True)
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'confirmpwd', 'email', 'tel', 'age', 'sex')
+        fields = ('username', 'password', 'email', 'tel', 'age', 'sex', 'confirmpwd')
 
     def validate(self, attrs):
-        if attrs['pwd2'] != attrs['password']:
+        if attrs['confirmpwd'] != attrs['password']:
             raise ValidationError('两次密码输入不一致')
-        del attrs['pwd2']
+        del attrs['confirmpwd']
         attrs['password'] = make_password(attrs['password'])
         attrs['status'] = "Normal"
         return attrs
@@ -49,5 +49,5 @@ class LogSerializers(serializers.ModelSerializer):
 class UserListSerializers(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'password', 'email', 'tel', 'age', 'sex', 'status', 'register_date')
+        fields = ('username', 'email', 'tel', 'age', 'sex', 'status', 'last_login', 'date_joined')
 
